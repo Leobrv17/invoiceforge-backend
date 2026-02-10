@@ -1,0 +1,134 @@
+# InvoiceForge
+## Document de cadrage produit & technique
+
+### 1. Présentation générale
+
+#### 1.1 Contexte
+InvoiceForge est une **application web de facturation** destinée aux auto-entrepreneurs et micro-entreprises françaises. Elle est conçue pour simplifier la gestion administrative tout en assurant une conformité stricte.
+
+Le projet répond à deux besoins fondamentaux :
+1.  **Contractualiser et Facturer** (Devis & Factures) légalement et rapidement.
+2.  **Anticiper et piloter** l’activité sans expertise comptable.
+
+Le déploiement suit une approche progressive :
+* **Version 1 (V1) :** Socle opérationnel, gestion des devis et factures, conformité légale et technique (Factur-X ready).
+* **Version 2 (V2) :** Gestion avancée de la TVA, analyse financière et prédictions.
+
+### 2. Vision produit
+
+InvoiceForge ambitionne d'être l'outil de référence pour l'auto-entrepreneur soucieux de sa conformité et de sa croissance.
+
+Les principes fondateurs sont :
+* **Conformité "By Design" :** Respect des normes actuelles et futures (Factur-X, réforme 2026).
+* **Flexibilité des flux :** Le devis est un outil commercial, pas un bloquant technique.
+* **Transparence & Propriété :** L'utilisateur reste maître de ses données (RGPD).
+* **Évolutivité technique :** Une structure de données prête pour la complexité (TVA) dès le jour 1.
+
+### 3. Objectifs du projet
+
+#### 3.1 Objectifs principaux (V1)
+* Permettre l'émission de **devis** et de **factures** conformes.
+* Assurer la conversion fluide **Devis → Facture** sans obligation de passer par un devis.
+* Garantir l'immutabilité et la traçabilité des documents fiscaux.
+* Préparer techniquement le format **Factur-X** (PDF + XML).
+* Assurer la conformité **RGPD** (export total des données).
+
+#### 3.2 Objectifs secondaires (V2)
+* Activer la gestion multi-régimes de TVA (bascule Franchise ↔ Assujetti).
+* Anticiper les seuils réglementaires.
+* Fournir des tableaux de bord d'analyse financière.
+
+### 4. Périmètre fonctionnel
+
+#### 4.1 Version 1 — Socle Commercial & Légal
+La V1 est une solution complète pour gérer le cycle de vente.
+
+**4.1.1 Compte et Entreprise (Architecture "TVA Ready")**
+* Création de compte unique.
+* Saisie des informations légales (SIRET, Adresse, etc.).
+* **Architecture des paramètres :**
+    * Le régime de TVA est stocké avec une **date de validité** (historisation des configurations).
+    * *En V1 :* Le régime est forcé en "Franchise en base" (TVA 0%), mais la structure de base de données supporte déjà l'assujettissement pour la V2.
+
+**4.1.2 Gestion des Clients & RGPD**
+* Création de fiches clients (Particuliers/Pros).
+* **Droit à la portabilité (RGPD) :** Bouton d'export complet des données client et de l'historique associé (JSON/CSV).
+
+**4.1.3 Gestion des Devis (Nouveau)**
+* Le devis est une étape **optionnelle** du flux.
+* Création de devis en mode brouillon.
+* Envoi et validation (Statuts : Brouillon, Envoyé, Accepté, Refusé).
+* **Conversion :** Transformation d'un devis "Accepté" en "Facture Brouillon" en 1 clic (copie des lignes).
+* Mention de validité du devis paramétrable.
+
+**4.1.4 Facturation & Factur-X**
+* Création directe ou issue d'un devis.
+* **Format de sortie :** PDF généré avec une structure compatible **Factur-X** (les métadonnées XML sont préparées en backend).
+* Numérotation légale automatique (séquentielle, sans trou).
+* Immutabilité stricte après validation (statut "Émise").
+* Statuts : Brouillon, Émise, Payée, En retard.
+
+**4.1.5 Avoirs**
+* Annulation/Correction stricte via facture d’avoir.
+* Liaison traçable à la facture d’origine.
+
+**4.1.6 Suivi et tableaux de bord (V1)**
+* Indicateurs clés : CA Facturé, CA Encaissé, En-cours Devis.
+* Alerte visuelle simple sur les impayés.
+
+**4.1.7 Export des données (Conformité RGPD)**
+* Module "Mon Espace Données" :
+    * Téléchargement d'une archive (ZIP) contenant toutes les factures PDF émises.
+    * Export CSV/JSON de l'ensemble des écritures (livre des recettes brut).
+    * Possibilité de suppression de compte (avec avertissement sur les obligations légales de conservation).
+
+#### 4.2 Version 2 — Intelligence & Fiscalité avancée (Anticipation)
+Les fonctionnalités suivantes sont techniquement préparées en V1 mais inactives :
+
+* **Gestion dynamique de la TVA :** Activation du moteur de calcul de TVA selon la date de la facture et le paramétrage de l'entreprise à l'instant T.
+* **Livre des recettes fiscal :** Génération du document officiel.
+* **Prédictions de seuils :** Projection du CA sur l'année.
+
+### 5. Expérience Utilisateur (UX)
+* **Interface unifiée :** Les menus "Analyse" ou "TVA" de la V2 sont présents mais indiqués "Bientôt disponible" pour montrer la roadmap.
+* **Flux non bloquant :** L'utilisateur peut créer une facture directement sans créer de client ou de devis au préalable (création à la volée).
+
+### 6. Architecture technique
+
+#### 6.1 Vue d’ensemble
+Architecture moderne, sécurisée et **orientée événements** pour gérer l'historique fiscal.
+
+* **Frontend :** React + Vite.
+* **Backend :** Python FastAPI (Typage strict).
+* **Base de données :** Firestore (NoSQL).
+* **Stockage Fichiers :** Google Cloud Storage (PDFs figés).
+
+#### 6.2 Spécificités Backend (Python FastAPI)
+* **Génération de documents :**
+    * Utilisation de librairies robustes pour le PDF.
+    * Préparation des balises XML pour l'injection Factur-X (norme EN 16931).
+* **Logique TVA (Préparation V2) :**
+    * Les lignes de facture possèdent un champ `tax_rate` et `tax_amount` stockés en base, même si `0` en V1. Cela évite une migration de base de données complexe lors du passage en V2.
+
+#### 6.3 Modèle de données (Firestore)
+* **Collection `settings_history` :** Stocke les changements de régime fiscal de l'entreprise avec `start_date` et `end_date`. Le backend vérifie cette collection à chaque émission de facture.
+* **Snapshots :** À l'émission d'une facture, les données du client et de l'entreprise sont dupliquées dans le document facture pour garantir l'intégrité historique (si le client déménage, la vieille facture ne change pas).
+
+#### 6.4 Sécurité & RGPD
+* **Authentification :** Firebase Auth.
+* **Isolation :** Règles de sécurité Firestore (`security rules`) strictes par `company_id`.
+* **Droit à l'oubli :** Scripts Cloud Functions permettant l'anonymisation des données clients sur demande (tout en conservant les logs légaux obligatoires côté administration fiscale).
+
+### 7. Principes de conformité réaffirmés
+
+1.  **Immutabilité :** Une facture émise est un fichier PDF stocké en "Write Once, Read Many".
+2.  **Standardisation :** Adoption du standard Factur-X (Hybrid PDF/A-3) comme cible technique.
+3.  **Liberté de données :** L'utilisateur n'est pas captif (Exports CSV/PDF complets).
+4.  **Traçabilité :** Tout document a un parent, une date de création et une date de validation.
+
+### 8. Conclusion
+
+Avec cette V1, InvoiceForge ne se contente pas d'être un outil de facturation basique. C'est un **socle technique professionnel** qui anticipe :
+* Les besoins commerciaux réels (Devis).
+* Les obligations légales futures (Factur-X).
+* La croissance de l'utilisateur (Structure de données prête pour la TVA).

@@ -1,0 +1,135 @@
+# InvoiceForge
+## Product & Technical Scoping Document
+
+### 1. General Overview
+
+#### 1.1 Context
+InvoiceForge is a **billing web application** designed for French solopreneurs and micro-enterprises. It is built to simplify administrative management while ensuring strict legal compliance.
+
+The project addresses two fundamental needs:
+1.  **Contract & Invoice:** Legally compliant quotes and invoices generated quickly.
+2.  **Monitor & Predict:** Business activity tracking without requiring accounting expertise.
+
+The project follows a progressive rollout:
+* **Version 1 (V1):** Operational core, quote and invoice management, legal and technical compliance (Factur-X ready).
+* **Version 2 (V2):** Advanced VAT management, financial analytics, and forecasting.
+
+### 2. Product Vision
+
+InvoiceForge aims to be the go-to tool for solopreneurs concerned with compliance and growth.
+
+The founding principles are:
+* **Compliance by Design:** Adherence to current and future standards (Factur-X, 2026 French electronic invoicing reform).
+* **Workflow Flexibility:** Quotes are sales tools, not technical blockers.
+* **Transparency & Ownership:** Users remain masters of their own data (GDPR).
+* **Technical Scalability:** A data structure ready for complexity (VAT) from Day 1.
+
+### 3. Project Objectives
+
+#### 3.1 Primary Objectives (V1)
+* Enable the issuance of compliant **quotes** and **invoices**.
+* Ensure seamless **Quote → Invoice** conversion without making quotes mandatory.
+* Guarantee immutability and traceability of fiscal documents.
+* Prepare the **Factur-X** (PDF + XML) format technically.
+* Ensure **GDPR** compliance (full data export).
+
+#### 3.2 Secondary Objectives (V2)
+* Activate multi-regime VAT management (switching between Franchise & VAT-registered).
+* Monitor and alert on regulatory thresholds.
+* Provide advanced financial analysis dashboards.
+
+### 4. Functional Scope
+
+#### 4.1 Version 1 — Commercial & Legal Core
+V1 is a complete solution for managing the sales cycle.
+
+**4.1.1 Account & Company (VAT-Ready Architecture)**
+* Single user account creation.
+* Input of legal information (SIRET, Address, etc.).
+* **Settings Architecture:**
+    * The VAT regime is stored with a **validity date** (versioned configuration).
+    * *In V1:* The regime is forced to "VAT Franchise" (0% VAT), but the database structure already supports registration for V2.
+
+**4.1.2 Client Management & GDPR**
+* Creation of client profiles (Individuals/Pros).
+* **Right to Portability (GDPR):** One-click button to export all client data and associated history (JSON/CSV).
+
+**4.1.3 Quote Management (New)**
+* Quotes are an **optional** step in the workflow.
+* Draft mode for quote creation.
+* Status tracking: Draft, Sent, Accepted, Refused.
+* **Conversion:** Transform an "Accepted" quote into a "Draft Invoice" in one click (line item mapping).
+
+**4.1.4 Invoicing & Factur-X**
+* Created directly or converted from a quote.
+* **Output Format:** PDF generated with a **Factur-X** compatible structure (XML metadata prepared in the backend).
+* Automatic legal numbering (sequential, no gaps).
+* Strict immutability once validated ("Issued" status).
+* Statuses: Draft, Issued, Paid, Overdue.
+
+**4.1.5 Credit Notes**
+* Strict cancellation/correction via credit notes.
+* Traceable link to the original invoice.
+
+**4.1.6 Tracking & Dashboards (V1)**
+* Key indicators: Total Invoiced, Total Collected, Pending Quotes.
+* Simple visual alerts for overdue payments.
+
+**4.1.7 Data Export (GDPR Compliance)**
+* "My Data Space" module:
+    * Download a ZIP archive containing all issued PDF invoices.
+    * CSV/JSON export of all accounting entries (raw revenue ledger).
+    * Account deletion option (with warnings regarding legal data retention obligations).
+
+#### 4.2 Version 2 — Intelligence & Advanced Fiscal Features (Anticipation)
+The following features are technically prepared in V1 but inactive:
+
+* **Dynamic VAT Management:** Activation of the VAT calculation engine based on invoice date and company settings.
+* **Official Revenue Ledger:** Generation of the mandatory French "Livre des recettes".
+* **Threshold Forecasting:** Revenue projection for the current year.
+
+### 5. User Experience (UX)
+* **Unified Interface:** "Analytics" or "VAT" menus for V2 are visible but marked "Coming Soon" to showcase the roadmap.
+* **Non-blocking Flow:** Users can create an invoice directly without pre-creating a client or quote (on-the-fly creation).
+
+### 6. Technical Architecture
+
+#### 6.1 Overview
+Modern, secure, and **event-oriented** architecture to manage fiscal history.
+
+* **Frontend:** React + Vite.
+* **Backend:** Python FastAPI (Strict typing).
+* **Database:** Firestore (NoSQL).
+* **File Storage:** Google Cloud Storage (Frozen PDFs).
+
+#### 6.2 Backend Specifics (Python FastAPI)
+* **Document Generation:**
+    * Robust PDF libraries for professional rendering.
+    * XML tag preparation for Factur-X injection (EN 16931 standard).
+* **VAT Logic (V2 Preparation):**
+    * Invoice lines include `tax_rate` and `tax_amount` fields in the database, even if set to `0` in V1. This avoids complex database migrations for V2.
+
+#### 6.3 Data Model (Firestore)
+* **`settings_history` Collection:** Stores changes in the company's fiscal regime with `start_date` and `end_date`.
+* **Snapshots:** Upon issuance, client and company data are duplicated into the invoice document to guarantee historical integrity (if a client moves, the past invoice remains unchanged).
+
+#### 6.4 Security & GDPR
+* **Authentication:** Firebase Auth.
+* **Isolation:** Strict Firestore security rules based on `company_id`.
+* **Right to be Forgotten:** Cloud Functions to anonymize client data upon request (while maintaining mandatory legal logs).
+
+### 7. Core Compliance Principles
+
+1.  **Immutability:** An issued invoice is a "Write Once, Read Many" PDF file.
+2.  **Standardization:** Adoption of the Factur-X standard (Hybrid PDF/A-3).
+3.  **Data Freedom:** No vendor lock-in (Full CSV/PDF exports).
+4.  **Traceability:** Every document has a parent, a creation date, and a validation timestamp.
+
+### 8. Conclusion
+
+With V1, InvoiceForge is more than a basic billing tool. It is a **professional technical foundation** anticipating:
+* Real commercial needs (Quotes).
+* Future legal obligations (Factur-X).
+* User growth (VAT-ready data structure).
+
+It is ready for development.
