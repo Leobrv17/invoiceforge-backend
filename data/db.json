@@ -1,0 +1,113 @@
+{
+  "company": {
+    "company_name": "Agence Nova",
+    "siret": "901 234 567 00016",
+    "address": "12 rue de la Forge, 75011 Paris",
+    "vat_regime": "Franchise en base",
+    "legal_notice": "TVA non applicable, article 293 B du CGI.",
+    "invoice_prefix": "IF"
+  },
+  "settings_history": [
+    {
+      "id": "SET-0001",
+      "vat_regime": "Franchise en base",
+      "start_date": "2026-02-10",
+      "end_date": null
+    }
+  ],
+  "counters": {
+    "client": 1025,
+    "quote": 2,
+    "invoice": 22,
+    "credit_note": 3,
+    "settings": 1
+  },
+  "clients": [
+    {
+      "id": "CL-1024",
+      "name": "Studio Omena",
+      "type": "Pro",
+      "email": "contact@omena.fr",
+      "created_at": "2026-02-10T08:03:58.619112"
+    },
+    {
+      "id": "CL-1025",
+      "name": "Atelier Celine",
+      "type": "Particulier",
+      "email": "celine@email.fr",
+      "created_at": "2026-02-10T08:03:58.619112"
+    }
+  ],
+  "quotes": [
+    {
+      "id": "DV-2024-001",
+      "client_name": "Studio Omena",
+      "amount": 1840,
+      "status": "Accepte",
+      "valid_until": "2024-06-30",
+      "created_at": "2026-02-10T08:03:58.619112"
+    },
+    {
+      "id": "DV-2024-002",
+      "client_name": "Atelier Celine",
+      "amount": 960,
+      "status": "Envoye",
+      "valid_until": "2024-07-12",
+      "created_at": "2026-02-10T08:03:58.619112"
+    }
+  ],
+  "invoices": [
+    {
+      "id": "IF-2024-0021",
+      "client_name": "Studio Omena",
+      "amount": 1240,
+      "status": "Emise",
+      "issued_at": "2024-06-02",
+      "tax_rate": 0.0,
+      "tax_amount": 0.0,
+      "created_at": "2026-02-10T08:03:58.619112",
+      "validated_at": "2026-02-10T08:03:58.619112",
+      "source_quote_id": null,
+      "snapshot": {
+        "client": {
+          "name": "Studio Omena"
+        },
+        "company": {
+          "company_name": "Agence Nova",
+          "vat_regime": "Franchise en base"
+        }
+      }
+    },
+    {
+      "id": "IF-2024-0022",
+      "client_name": "Atelier Celine",
+      "amount": 780,
+      "status": "Payee",
+      "issued_at": "2024-06-05",
+      "tax_rate": 0.0,
+      "tax_amount": 0.0,
+      "created_at": "2026-02-10T08:03:58.619112",
+      "validated_at": "2026-02-10T08:03:58.619112",
+      "source_quote_id": null,
+      "snapshot": {
+        "client": {
+          "name": "Atelier Celine"
+        },
+        "company": {
+          "company_name": "Agence Nova",
+          "vat_regime": "Franchise en base"
+        }
+      }
+    }
+  ],
+  "credit_notes": [
+    {
+      "id": "AV-2024-0003",
+      "invoice_id": "IF-2024-0018",
+      "amount": 320,
+      "issued_at": "2024-05-21",
+      "created_at": "2026-02-10T08:03:58.619112"
+    }
+  ],
+  "deletion_requests": []
+}
