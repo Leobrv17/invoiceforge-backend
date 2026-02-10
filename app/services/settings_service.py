@@ -7,10 +7,10 @@ from app.storage.db import db
 
 
 class SettingsService:
-    def get_company(self) -> dict[str, Any]:
-        return db.read()["company"]
+    def get_company(self, uid: str) -> dict[str, Any]:
+        return db.read(uid)["company"]
 
-    def update_company(self, payload: dict[str, Any]) -> dict[str, Any]:
+    def update_company(self, uid: str, payload: dict[str, Any]) -> dict[str, Any]:
         def _mutate(state: dict[str, Any]) -> dict[str, Any]:
             previous_vat = state["company"]["vat_regime"]
             state["company"].update(payload)
@@ -30,7 +30,7 @@ class SettingsService:
                 )
             return state["company"]
 
-        return db.mutate(_mutate)
+        return db.mutate(uid, _mutate)
 
-    def list_settings_history(self) -> list[dict[str, Any]]:
-        return db.read()["settings_history"]
+    def list_settings_history(self, uid: str) -> list[dict[str, Any]]:
+        return db.read(uid)["settings_history"]

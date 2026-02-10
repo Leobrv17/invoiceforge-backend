@@ -10,10 +10,10 @@ from app.storage.db import db
 
 
 class QuotesService(BaseService):
-    def list_quotes(self) -> list[dict[str, Any]]:
-        return db.read()["quotes"]
+    def list_quotes(self, uid: str) -> list[dict[str, Any]]:
+        return db.read(uid)["quotes"]
 
-    def create_quote(self, payload: dict[str, Any]) -> dict[str, Any]:
+    def create_quote(self, uid: str, payload: dict[str, Any]) -> dict[str, Any]:
         def _mutate(state: dict[str, Any]) -> dict[str, Any]:
             state["counters"]["quote"] += 1
             quote_id = self.build_id("DV", self.year(), state["counters"]["quote"], 3)
@@ -27,9 +27,9 @@ class QuotesService(BaseService):
             state["quotes"].insert(0, record)
             return record
 
-        return db.mutate(_mutate)
+        return db.mutate(uid, _mutate)
 
-    def update_quote_status(self, quote_id: str, status: QuoteStatus) -> dict[str, Any]:
+    def update_quote_status(self, uid: str, quote_id: str, status: QuoteStatus) -> dict[str, Any]:
         def _mutate(state: dict[str, Any]) -> dict[str, Any]:
             for quote in state["quotes"]:
                 if quote["id"] == quote_id:
@@ -37,4 +37,4 @@ class QuotesService(BaseService):
                     return quote
             raise HTTPException(status_code=404, detail="Quote not found")
 
-        return db.mutate(_mutate)
+        return db.mutate(uid, _mutate)

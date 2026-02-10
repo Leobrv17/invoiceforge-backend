@@ -11,10 +11,10 @@ from app.storage.db import db
 
 
 class InvoicesService(BaseService):
-    def list_invoices(self) -> list[dict[str, Any]]:
-        return db.read()["invoices"]
+    def list_invoices(self, uid: str) -> list[dict[str, Any]]:
+        return db.read(uid)["invoices"]
 
-    def create_invoice(self, payload: dict[str, Any]) -> dict[str, Any]:
+    def create_invoice(self, uid: str, payload: dict[str, Any]) -> dict[str, Any]:
         def _mutate(state: dict[str, Any]) -> dict[str, Any]:
             state["counters"]["invoice"] += 1
             invoice_prefix = state["company"]["invoice_prefix"]
@@ -30,9 +30,9 @@ class InvoicesService(BaseService):
             state["invoices"].insert(0, record)
             return record
 
-        return db.mutate(_mutate)
+        return db.mutate(uid, _mutate)
 
-    def update_invoice_status(self, invoice_id: str, status: InvoiceStatus) -> dict[str, Any]:
+    def update_invoice_status(self, uid: str, invoice_id: str, status: InvoiceStatus) -> dict[str, Any]:
         def _mutate(state: dict[str, Any]) -> dict[str, Any]:
             invoice = next((item for item in state["invoices"] if item["id"] == invoice_id), None)
             if not invoice:
@@ -61,9 +61,9 @@ class InvoicesService(BaseService):
                 }
             return invoice
 
-        return db.mutate(_mutate)
+        return db.mutate(uid, _mutate)
 
-    def create_invoice_from_quote(self, quote_id: str) -> dict[str, Any]:
+    def create_invoice_from_quote(self, uid: str, quote_id: str) -> dict[str, Any]:
         def _mutate(state: dict[str, Any]) -> dict[str, Any]:
             quote = next((item for item in state["quotes"] if item["id"] == quote_id), None)
             if not quote:
@@ -89,4 +89,4 @@ class InvoicesService(BaseService):
             state["invoices"].insert(0, invoice)
             return invoice
 
-        return db.mutate(_mutate)
+        return db.mutate(uid, _mutate)

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from typing import List
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from app.api.dependencies import require_authenticated_uid
 from app.models import InvoiceRead, QuoteCreate, QuoteRead, QuoteStatusUpdate
 from app.services import service
 
@@ -16,8 +17,8 @@ router = APIRouter(prefix="/quotes", tags=["Quotes"])
     summary="Lister les devis",
     description="Retourne tous les devis avec leur statut metier.",
 )
-def list_quotes() -> list[dict]:
-    return service.list_quotes()
+def list_quotes(uid: str = Depends(require_authenticated_uid)) -> list[dict]:
+    return service.list_quotes(uid)
 
 
 @router.post(
@@ -27,8 +28,8 @@ def list_quotes() -> list[dict]:
     summary="Creer un devis",
     description="Creer un devis en statut Brouillon.",
 )
-def create_quote(payload: QuoteCreate) -> dict:
-    return service.create_quote(payload.model_dump())
+def create_quote(payload: QuoteCreate, uid: str = Depends(require_authenticated_uid)) -> dict:
+    return service.create_quote(uid, payload.model_dump())
 
 
 @router.patch(
@@ -37,8 +38,8 @@ def create_quote(payload: QuoteCreate) -> dict:
     summary="Mettre a jour le statut d'un devis",
     description="Met a jour le statut d'un devis existant.",
 )
-def patch_quote_status(quote_id: str, payload: QuoteStatusUpdate) -> dict:
-    return service.update_quote_status(quote_id, payload.status)
+def patch_quote_status(quote_id: str, payload: QuoteStatusUpdate, uid: str = Depends(require_authenticated_uid)) -> dict:
+    return service.update_quote_status(uid, quote_id, payload.status)
 
 
 @router.post(
@@ -48,5 +49,5 @@ def patch_quote_status(quote_id: str, payload: QuoteStatusUpdate) -> dict:
     summary="Convertir un devis en facture",
     description="Convertit un devis Accepte en facture Brouillon.",
 )
-def convert_quote(quote_id: str) -> dict:
-    return service.convert_quote_to_invoice(quote_id)
+def convert_quote(quote_id: str, uid: str = Depends(require_authenticated_uid)) -> dict:
+    return service.convert_quote_to_invoice(uid, quote_id)

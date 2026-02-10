@@ -7,7 +7,7 @@ from app.storage.db import db
 
 
 class AccountService(BaseService):
-    def request_account_deletion(self) -> dict[str, Any]:
+    def request_account_deletion(self, uid: str) -> dict[str, Any]:
         def _mutate(state: dict[str, Any]) -> dict[str, Any]:
             request = {
                 "requested_at": self.iso_now(),
@@ -17,4 +17,4 @@ class AccountService(BaseService):
             state["deletion_requests"].append(request)
             return request
 
-        return db.mutate(_mutate)
+        return db.mutate(uid, _mutate)

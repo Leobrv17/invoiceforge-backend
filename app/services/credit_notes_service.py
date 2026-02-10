@@ -10,10 +10,10 @@ from app.storage.db import db
 
 
 class CreditNotesService(BaseService):
-    def list_credit_notes(self) -> list[dict[str, Any]]:
-        return db.read()["credit_notes"]
+    def list_credit_notes(self, uid: str) -> list[dict[str, Any]]:
+        return db.read(uid)["credit_notes"]
 
-    def create_credit_note(self, payload: dict[str, Any]) -> dict[str, Any]:
+    def create_credit_note(self, uid: str, payload: dict[str, Any]) -> dict[str, Any]:
         def _mutate(state: dict[str, Any]) -> dict[str, Any]:
             invoice = next((item for item in state["invoices"] if item["id"] == payload["invoice_id"]), None)
             if not invoice:
@@ -31,4 +31,4 @@ class CreditNotesService(BaseService):
             state["credit_notes"].insert(0, record)
             return record
 
-        return db.mutate(_mutate)
+        return db.mutate(uid, _mutate)

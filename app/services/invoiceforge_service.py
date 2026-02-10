@@ -24,62 +24,62 @@ class InvoiceForgeService:
         self.exports = ExportsService()
         self.account = AccountService()
 
-    def dashboard(self) -> dict[str, Any]:
-        return self.dashboard_service.dashboard()
+    def dashboard(self, uid: str) -> dict[str, Any]:
+        return self.dashboard_service.dashboard(uid)
 
-    def list_clients(self) -> list[dict[str, Any]]:
-        return self.clients.list_clients()
+    def list_clients(self, uid: str) -> list[dict[str, Any]]:
+        return self.clients.list_clients(uid)
 
-    def create_client(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return self.clients.create_client(payload)
+    def create_client(self, uid: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return self.clients.create_client(uid, payload)
 
-    def list_quotes(self) -> list[dict[str, Any]]:
-        return self.quotes.list_quotes()
+    def list_quotes(self, uid: str) -> list[dict[str, Any]]:
+        return self.quotes.list_quotes(uid)
 
-    def create_quote(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return self.quotes.create_quote(payload)
+    def create_quote(self, uid: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return self.quotes.create_quote(uid, payload)
 
-    def update_quote_status(self, quote_id: str, status: QuoteStatus) -> dict[str, Any]:
-        return self.quotes.update_quote_status(quote_id, status)
+    def update_quote_status(self, uid: str, quote_id: str, status: QuoteStatus) -> dict[str, Any]:
+        return self.quotes.update_quote_status(uid, quote_id, status)
 
-    def convert_quote_to_invoice(self, quote_id: str) -> dict[str, Any]:
-        return self.invoices.create_invoice_from_quote(quote_id)
+    def convert_quote_to_invoice(self, uid: str, quote_id: str) -> dict[str, Any]:
+        return self.invoices.create_invoice_from_quote(uid, quote_id)
 
-    def list_invoices(self) -> list[dict[str, Any]]:
-        return self.invoices.list_invoices()
+    def list_invoices(self, uid: str) -> list[dict[str, Any]]:
+        return self.invoices.list_invoices(uid)
 
-    def create_invoice(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return self.invoices.create_invoice(payload)
+    def create_invoice(self, uid: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return self.invoices.create_invoice(uid, payload)
 
-    def update_invoice_status(self, invoice_id: str, status: InvoiceStatus) -> dict[str, Any]:
-        return self.invoices.update_invoice_status(invoice_id, status)
+    def update_invoice_status(self, uid: str, invoice_id: str, status: InvoiceStatus) -> dict[str, Any]:
+        return self.invoices.update_invoice_status(uid, invoice_id, status)
 
-    def list_credit_notes(self) -> list[dict[str, Any]]:
-        return self.credit_notes.list_credit_notes()
+    def list_credit_notes(self, uid: str) -> list[dict[str, Any]]:
+        return self.credit_notes.list_credit_notes(uid)
 
-    def create_credit_note(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return self.credit_notes.create_credit_note(payload)
+    def create_credit_note(self, uid: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return self.credit_notes.create_credit_note(uid, payload)
 
-    def get_company(self) -> dict[str, Any]:
-        return self.settings.get_company()
+    def get_company(self, uid: str) -> dict[str, Any]:
+        return self.settings.get_company(uid)
 
-    def update_company(self, payload: dict[str, Any]) -> dict[str, Any]:
-        return self.settings.update_company(payload)
+    def update_company(self, uid: str, payload: dict[str, Any]) -> dict[str, Any]:
+        return self.settings.update_company(uid, payload)
 
-    def list_settings_history(self) -> list[dict[str, Any]]:
-        return self.settings.list_settings_history()
+    def list_settings_history(self, uid: str) -> list[dict[str, Any]]:
+        return self.settings.list_settings_history(uid)
 
-    def export_ledger_json(self) -> list[dict[str, Any]]:
-        return self.exports.export_ledger_json()
+    def export_ledger_json(self, uid: str) -> list[dict[str, Any]]:
+        return self.exports.export_ledger_json(uid)
 
-    def export_ledger_csv(self) -> str:
-        return self.exports.export_ledger_csv()
+    def export_ledger_csv(self, uid: str) -> str:
+        return self.exports.export_ledger_csv(uid)
 
-    def export_issued_invoices_zip(self) -> bytes:
-        return self.exports.export_issued_invoices_zip()
+    def export_issued_invoices_zip(self, uid: str) -> bytes:
+        return self.exports.export_issued_invoices_zip(uid)
 
-    def request_account_deletion(self) -> dict[str, Any]:
-        return self.account.request_account_deletion()
+    def request_account_deletion(self, uid: str) -> dict[str, Any]:
+        return self.account.request_account_deletion(uid)
 
 
 service = InvoiceForgeService()

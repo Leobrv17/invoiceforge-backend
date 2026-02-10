@@ -1,7 +1,10 @@
+from __future__ import annotations
+
+import os
 from pathlib import Path
 
 APP_NAME = "InvoiceForge Backend"
-APP_VERSION = "1.1.0"
+APP_VERSION = "1.2.0"
 API_PREFIX = "/api/v1"
 APP_DESCRIPTION = (
     "API backend InvoiceForge. "
@@ -23,3 +26,8 @@ API_TAGS = [
 DATA_DIR = Path(__file__).resolve().parents[2] / "data"
 DATA_FILE = DATA_DIR / "db.json"
 PDF_DIR = DATA_DIR / "pdf"
+
+STORAGE_BACKEND = os.getenv("STORAGE_BACKEND", "firestore").lower()
+FIRESTORE_COLLECTION = os.getenv("FIRESTORE_COLLECTION", "invoiceforge_users")
+FIREBASE_PROJECT_ID = os.getenv("FIREBASE_PROJECT_ID", "").strip() or None
+FIREBASE_SERVICE_ACCOUNT_FILE = os.getenv("FIREBASE_SERVICE_ACCOUNT_FILE", "firebase/service-account.json")

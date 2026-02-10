@@ -14,8 +14,8 @@ from app.storage.db import db
 
 
 class ExportsService:
-    def ledger_entries(self) -> list[dict[str, Any]]:
-        state = db.read()
+    def ledger_entries(self, uid: str) -> list[dict[str, Any]]:
+        state = db.read(uid)
         entries: list[dict[str, Any]] = []
         for quote in state["quotes"]:
             entries.append(
@@ -52,15 +52,15 @@ class ExportsService:
             )
         return entries
 
-    def export_ledger_json(self) -> list[dict[str, Any]]:
-        return self.ledger_entries()
+    def export_ledger_json(self, uid: str) -> list[dict[str, Any]]:
+        return self.ledger_entries(uid)
 
-    def export_ledger_csv(self) -> str:
+    def export_ledger_csv(self, uid: str) -> str:
         buffer = StringIO()
         fields = ["document_id", "document_type", "client_name", "amount", "status", "date"]
         writer = csv.DictWriter(buffer, fieldnames=fields)
         writer.writeheader()
-        for row in self.ledger_entries():
+        for row in self.ledger_entries(uid):
             writer.writerow(row)
         return buffer.getvalue()
 
@@ -81,8 +81,8 @@ class ExportsService:
         pdf.save()
         return io.getvalue()
 
-    def export_issued_invoices_zip(self) -> bytes:
-        state = db.read()
+    def export_issued_invoices_zip(self, uid: str) -> bytes:
+        state = db.read(uid)
         issued = [
             invoice
             for invoice in state["invoices"]

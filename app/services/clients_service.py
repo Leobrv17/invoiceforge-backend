@@ -7,10 +7,10 @@ from app.storage.db import db
 
 
 class ClientsService(BaseService):
-    def list_clients(self) -> list[dict[str, Any]]:
-        return db.read()["clients"]
+    def list_clients(self, uid: str) -> list[dict[str, Any]]:
+        return db.read(uid)["clients"]
 
-    def create_client(self, payload: dict[str, Any]) -> dict[str, Any]:
+    def create_client(self, uid: str, payload: dict[str, Any]) -> dict[str, Any]:
         def _mutate(state: dict[str, Any]) -> dict[str, Any]:
             state["counters"]["client"] += 1
             record = {
@@ -21,4 +21,4 @@ class ClientsService(BaseService):
             state["clients"].insert(0, record)
             return record
 
-        return db.mutate(_mutate)
+        return db.mutate(uid, _mutate)

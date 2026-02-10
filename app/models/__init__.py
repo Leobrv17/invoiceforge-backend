@@ -1,4 +1,5 @@
 from app.models.account import AccountDeletionRequestRead
+from app.models.auth import AuthenticatedUser
 from app.models.client import ClientCreate, ClientRead
 from app.models.credit_note import CreditNoteCreate, CreditNoteRead
 from app.models.dashboard import DashboardStats
@@ -10,6 +11,7 @@ from app.models.settings import CompanySettings, SettingsHistoryEntry
 
 __all__ = [
     "AccountDeletionRequestRead",
+    "AuthenticatedUser",
     "ClientCreate",
     "ClientRead",
     "ClientType",

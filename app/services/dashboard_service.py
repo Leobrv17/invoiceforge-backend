@@ -7,8 +7,8 @@ from app.storage.db import db
 
 
 class DashboardService:
-    def dashboard(self) -> dict[str, Any]:
-        state = db.read()
+    def dashboard(self, uid: str) -> dict[str, Any]:
+        state = db.read(uid)
         invoices = state["invoices"]
         total_invoiced = round(sum(item["amount"] for item in invoices), 2)
         total_collected = round(

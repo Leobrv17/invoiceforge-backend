@@ -1,8 +1,9 @@
 from __future__ import annotations
 
-from fastapi import APIRouter, Response
+from fastapi import APIRouter, Depends, Response
 from fastapi.responses import JSONResponse
 
+from app.api.dependencies import require_authenticated_uid
 from app.services import service
 
 router = APIRouter(prefix="/exports", tags=["Exports"])
@@ -13,8 +14,8 @@ router = APIRouter(prefix="/exports", tags=["Exports"])
     summary="Exporter le ledger en JSON",
     description="Exporte le grand livre agrege (devis/factures/avoirs) au format JSON.",
 )
-def export_ledger_json() -> JSONResponse:
-    return JSONResponse(content=service.export_ledger_json())
+def export_ledger_json(uid: str = Depends(require_authenticated_uid)) -> JSONResponse:
+    return JSONResponse(content=service.export_ledger_json(uid))
 
 
 @router.get(
@@ -22,8 +23,8 @@ def export_ledger_json() -> JSONResponse:
     summary="Exporter le ledger en CSV",
     description="Exporte le grand livre agrege (devis/factures/avoirs) au format CSV.",
 )
-def export_ledger_csv() -> Response:
-    csv_content = service.export_ledger_csv()
+def export_ledger_csv(uid: str = Depends(require_authenticated_uid)) -> Response:
+    csv_content = service.export_ledger_csv(uid)
     return Response(
         content=csv_content,
         media_type="text/csv",
@@ -36,8 +37,8 @@ def export_ledger_csv() -> Response:
     summary="Exporter les factures en ZIP",
     description="Genere et telecharge une archive ZIP des factures Emise/Payee en PDF.",
 )
-def export_invoices_zip() -> Response:
-    payload = service.export_issued_invoices_zip()
+def export_invoices_zip(uid: str = Depends(require_authenticated_uid)) -> Response:
+    payload = service.export_issued_invoices_zip(uid)
     return Response(
         content=payload,
         media_type="application/zip",
